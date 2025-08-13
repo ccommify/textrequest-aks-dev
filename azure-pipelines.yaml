@@ -1,0 +1,62 @@
+# azure-pipelines.yml
+
+# This pipeline will trigger on changes to the specified Helm chart directory
+# for the 'dev' environment. It will ignore changes to other
+# files in the repository.
+trigger:
+  batch: true  # This groups multiple commits and runs a single pipeline for them
+  paths:
+    include:
+    - 'bootstrap/dev/argocd/**'
+
+# This schedule runs the pipeline every hour. The cron string '0 * * * *'
+# means at minute 0 past every hour, every day of the month, every month, every day of the week.
+schedules:
+- cron: '0 * * * *'
+  displayName: Hourly ArgoCD Deployment
+  branches:
+    include:
+    - main # Or the name of your main branch
+  always: true
+
+# Define a variable for the Helm version to make it easy to update
+variables:
+  helmVersion: '3.15.0'
+
+# A single stage for the entire deployment process
+stages:
+- stage: DeployToDev
+  displayName: 'Deploy ArgoCD to Development'
+  jobs:
+  - job: DeployToDevJob
+    displayName: 'Deploy to Development'
+    pool:
+      vmImage: 'ubuntu-latest'
+    
+    steps:
+    # 1. Install the specified version of Helm
+    - task: HelmInstaller@1
+      displayName: 'Install Helm $(helmVersion)'
+      inputs:
+        helmVersionToInstall: $(helmVersion)
+        
+    # 2. Add the Argo Helm repository
+    - script: |
+        helm repo add argo https://argoproj.github.io/argo-helm
+      displayName: 'Add Argo Helm Repo'
+
+    # 3. Update dependencies for the dev chart
+    - script: |
+        helm dependency build ./bootstrap/dev/argocd/
+      displayName: 'Build Dev Helm Dependencies'
+
+    # 4. Deploy the dev chart
+    - task: Kubernetes@1
+      displayName: 'Upgrade/Install ArgoCD Dev'
+      inputs:
+        # NOTE: You must configure a Kubernetes Service Connection in your ADO project settings
+        # This connection is what allows ADO to talk to your cluster.
+        kubernetesServiceConnection: 'gitlab-textrequest-sc'
+        namespace: 'argocd-dev' # A dedicated namespace for dev
+        command: 'install'
+        arguments: 'argo-dev bootstrap/dev/argocd/ --create-namespace --install -f bootstrap/dev/argocd/values.yaml'
