@@ -1,0 +1,19 @@
+generic:
+  nameOverride: treq
+  fullnameOverride: treq
+
+  replicaCount: 1
+
+  image:
+    repository: ubuntu
+    pullPolicy: Always
+    tag: "25.04"
+
+  probes:
+    enabled: false
+
+  entrypoint:
+    command:
+      - /bin/sh
+      - -c
+      - apt-get update && apt-get install -y curl ca-certificates && tail -f /dev/null

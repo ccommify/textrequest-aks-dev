@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gitlab-provisioning
+  namespace: argo
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  name: gitlab-provisioning
+  project: default
+  type: git
+  url: git@gitlab.com:voodoosms/provisioning/textrequest.git
+  sshPrivateKey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACCmMXOeluaZ12MIsW3bRTI5w3enqemdQJ5OgfJFJxVq2QAAAJAiPtDMIj7Q
+    zAAAAAtzc2gtZWQyNTUxOQAAACCmMXOeluaZ12MIsW3bRTI5w3enqemdQJ5OgfJFJxVq2Q
+    AAAEA7iIFjTRUKtlW4v5Y4jFcU4zbHsKFSF+YE615Ae3HtuKYxc56W5pnXYwixbdtFMjnD
+    d6ep6Z1Ank6B8kUnFWrZAAAAC2hlbnJ5QEMxMzYxAQI=
+    -----END OPENSSH PRIVATE KEY-----

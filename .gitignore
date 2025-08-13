@@ -1,0 +1,4 @@
+charts/
+.vscode/settings.json
+.env
+tmp/

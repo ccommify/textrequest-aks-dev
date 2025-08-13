@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster
+  namespace: argo
+spec:
+  destination:
+    namespace: argo
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: clusters/prod/apps
+    repoURL: "https://commify@dev.azure.com/commify/Text%20Request%20Framework%20Provisioning/_git/argocd-bootstrap"
+    targetRevision: HEAD
+    directory:
+      recurse: true
+      include: "*.app.yaml"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
