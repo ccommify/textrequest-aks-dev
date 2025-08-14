@@ -57,6 +57,6 @@ stages:
         # NOTE: You must configure a Kubernetes Service Connection in your ADO project settings
         # This connection is what allows ADO to talk to your cluster.
         kubernetesServiceConnection: 'dev-aks-sc'
-        namespace: 'argocd-dev' # A dedicated namespace for dev
+        namespace: 'argo' # The corrected namespace for the deployment
         command: 'install'
         arguments: 'argo-dev bootstrap/dev/argocd/ --create-namespace --install -f bootstrap/dev/argocd/values.yaml'
